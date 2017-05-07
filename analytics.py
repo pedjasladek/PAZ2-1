@@ -66,7 +66,7 @@ def time_measure(graph: Dict[Vertex, List[Vertex]], bfs: bool=False):
 def analyse():
     """Extracts runing times. New graph will be made for every value in runnsize.
      modify runnsize for different size of graphs"""
-    vertices = [5, 25, 50]
+    vertices = [5, 25, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
     exectimebfs = []
     exectimedfs = []
     edges = []
