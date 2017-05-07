@@ -1,5 +1,4 @@
 """Vertex structures and dfs/bfs book implementations"""
-import queue
 from enum import Enum
 from typing import Dict, List
 
@@ -128,20 +127,20 @@ def print_path(graph: Dict[Vertex, List[Vertex]],
 def breadth_first_search(graph: Dict[Vertex, Vertex], source: Vertex):
     """BFS Implementation"""
     source.reset()
-    vertexqueue = queue.Queue()
+    vertexqueue = []
     for vertex in graph.keys():
         if vertex != source:
             vertex.reset()
     source.color = Color.GRAY
     source.init_start()
     source.parent = None
-    vertexqueue.put(source)
-    while not vertexqueue.empty():
-        vertexsource = vertexqueue.get()
+    vertexqueue.append(source)
+    while len(vertexqueue) is not 0:
+        vertexsource = vertexqueue.pop(0)
         for vertex in graph[vertexsource]:
             if vertex.color is Color.WHITE:
                 vertex.color = Color.GRAY
                 vertex.parent = vertexsource
-                vertexqueue.put(vertex)
+                vertexqueue.append(vertex)
                 vertex.data['Start'] = vertexsource.data['Start'] + 1
         vertexsource.color = Color.BLACK
