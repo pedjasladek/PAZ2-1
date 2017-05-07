@@ -5,7 +5,6 @@ from typing import Dict, List
 
 TIME = 0
 
-
 class Vertex:
     """Cvor grafa"""
     def __init__(self, name):
@@ -18,20 +17,49 @@ class Vertex:
             }
 
     def __repr__(self):
-        return "{}:{} Data: {}".format(self.color, self.data, self.name)
+        colorstring = ""
+        parentstring = ""
+        startstring = ""
+        endstring = ""
+        if self.color is Color.BLACK:
+            colorstring = 'BLACK'
+        elif self.color is Color.GRAY:
+            colorstring = 'GRAY'
+        else:
+            colorstring = 'WHITE'
+        if self.parent is None:
+            parentstring = " "
+        else:
+            parentstring = self.parent.name
+        if self.data['Start'] is None:
+            startstring = ''
+        else:
+            startstring = "\n\t{}".format(self.data['Start'])
+        if self.data['End'] is None:
+            endstring = ''
+        else:
+            endstring = "/{}".format(self.data['End'])
+        return "{0}:\n\tColor: {1}{2}{3}\n\t[{4}]\n"\
+        .format(self.name, colorstring, startstring, endstring, parentstring)
 
     def reset(self):
         """Reset Vertex"""
         self.color = Color.WHITE
         self.parent = None
         self.data = {
-            'Discovery': None,
-            'Finish': None
+            'Start': None,
+            'End': None
         }
 
-    def increment(self, vertex):
-        """Increase data"""
-        self.data = vertex.data + 1
+    def init_start(self):
+        """init start time"""
+        if self.data['Start'] is None:
+            self.data['Start'] = 0
+
+    def init_end(self):
+        """init end time"""
+        if self.data['End'] is None:
+            self.data['End'] = 0
 
 
 class Color(Enum):
@@ -41,10 +69,7 @@ class Color(Enum):
     WHITE = 255
 
 
-# ZADATAK3
-
-
-def depth_first_search(graph: Dict[Vertex, List[Vertex]], toplist: List[Vertex] = None):
+def depth_first_search(graph: Dict[Vertex, List[Vertex]], toplist: List[Vertex]=None):
     """DFS Implement"""
     for vertex in graph.keys():
         vertex.reset()
@@ -55,7 +80,7 @@ def depth_first_search(graph: Dict[Vertex, List[Vertex]], toplist: List[Vertex] 
             dfs_visit(graph, vertex, toplist)
 
 
-def dfs_visit(graph: Dict[Vertex, List[Vertex]], element: Vertex, toplist: List[Vertex] = None):
+def dfs_visit(graph: Dict[Vertex, List[Vertex]], element: Vertex, toplist: List[Vertex]=None):
     """Part of dfs for depth"""
     global TIME
     TIME = TIME + 1
@@ -107,3 +132,12 @@ def breadth_first_search(graph: Dict[Vertex, Vertex], source: Vertex):
         time += 1
         vertexsource.color = Color.BLACK
         vertexsource.data['Finish'] = time
+
+# TESTIRANJE
+TEST = Vertex('test')
+PARENT = Vertex('parent')
+print(TEST)
+TEST.parent = PARENT
+TEST.data['End'] = 4
+TEST.data['Start'] = 3
+print(TEST)
