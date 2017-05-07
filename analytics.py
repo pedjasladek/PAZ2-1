@@ -96,3 +96,4 @@ def plot_graph_stats(vertices: List[int], edges: List[int], exec_time: List[int]
         .format(item, edges[index], exec_time[index]))
 
 analyse()
+plt.show()
