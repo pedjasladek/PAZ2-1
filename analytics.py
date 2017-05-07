@@ -1,8 +1,8 @@
 """Random graph generations and plot"""
 from typing import Dict, List
 import random
-#import time
-#import matplotlib.pyplot as plt
+import time
+import matplotlib.pyplot as plt
 from implementmodule import Vertex, breadth_first_search, depth_first_search
 
 def sum_edges(graph: Dict[Vertex, List[Vertex]]):
@@ -49,11 +49,50 @@ def first_source(graph: Dict[Vertex, List[Vertex]]):
     for item in graph:
         return item
 
+def time_measure(graph: Dict[Vertex, List[Vertex]], bfs: bool=False):
+    """Returns how long it took for dfs (default) or bfs (set aditonal argument to True)"""
+    time_start = 0
+    time_end = 0
+    if not bfs:
+        time_start = time.clock()
+        depth_first_search(graph, first_source(graph))
+        time_end = time.clock()
+    else:
+        time_start = time.clock()
+        breadth_first_search(graph, first_source(graph))
+        time_end = time.clock()
+    return time_end - time_start
 
-TESTGRAPH = generate_graph(10)
-print(sum_edges(TESTGRAPH))
-print(sum_vertexes(TESTGRAPH))
+def analyse():
+    """Extracts runing times. New graph will be made for every value in runnsize.
+     modify runnsize for different size of graphs"""
+    vertices = [5, 25, 50]
+    exectimebfs = []
+    exectimedfs = []
+    edges = []
+    for item in vertices:
+        temp_graph = generate_graph(item)
+        # number of edges
+        edges.append(sum_edges(temp_graph))
+        # extract time for bfs
+        exectimebfs.append(time_measure(temp_graph, True))
+        # extract time for dfs
+        exectimedfs.append(time_measure(temp_graph))
+    plot_graph_stats(vertices, edges, exectimebfs, 'Breath-First-Search')
+    plot_graph_stats(vertices, edges, exectimedfs, 'Depth-First-Search')
 
-breadth_first_search(TESTGRAPH, first_source(TESTGRAPH))
-depth_first_search(TESTGRAPH, first_source(TESTGRAPH))
-print(TESTGRAPH.keys())
+def plot_graph_stats(vertices: List[int], edges: List[int], exec_time: List[int], label: str):
+    """Makes plot of graph structure"""
+    input_data = []
+    for index, item in enumerate(vertices):
+        input_data.append(item + edges[index])
+    plt.plot(input_data, exec_time, label=label)
+    plt.xlabel('V + E [n]')
+    plt.ylabel('T[S]')
+    plt.legend()
+    print(label)
+    for index, item in enumerate(vertices):
+        print("Number of vertecies: {} Number of edges: {} Time: {}"\
+        .format(item, edges[index], exec_time[index]))
+
+analyse()

@@ -1,4 +1,4 @@
-"""Vertex structures"""
+"""Vertex structures and dfs/bfs book implementations"""
 import queue
 from enum import Enum
 from typing import Dict, List
