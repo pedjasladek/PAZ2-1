@@ -1,4 +1,4 @@
-"""Testiranje i iscrtavanje"""
+"""Book examples for basic testing"""
 from implementmodule import Vertex, breadth_first_search, depth_first_search, print_path
 
 VERTEXR = Vertex('R')
@@ -39,4 +39,3 @@ print_path(DFSG, VERTEXU, VERTEXY, True)
 # This calls BFS on DFSG graph
 print_path(DFSG, VERTEXU, VERTEXY)
 depth_first_search(DFSG, VERTEXU)
-print(DFSG.keys())

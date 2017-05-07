@@ -3,8 +3,6 @@ import queue
 from enum import Enum
 from typing import Dict, List
 
-TIME = 0
-
 class Vertex:
     """Graph vertex"""
     def __init__(self, name):
@@ -71,33 +69,35 @@ class Color(Enum):
     WHITE = 255
 
 
-def depth_first_search(graph: Dict[Vertex, List[Vertex]], vertex: Vertex, toplist: List[Vertex]=None):
+def depth_first_search(graph: Dict[Vertex, List[Vertex]],
+                       vertex: Vertex,
+                       toplist: List[Vertex]=None):
     """DFS Implement additional arg is for topological sort"""
     for vertex in graph.keys():
         vertex.reset()
-    global TIME
-    TIME = 0
+    # Don't use globals
+    time = 0
     for vertex in graph.keys():
         if vertex.color is Color.WHITE:
-            dfs_visit(graph, vertex, toplist)
+            time = dfs_visit(graph, vertex, time, toplist)
 
 
-def dfs_visit(graph: Dict[Vertex, List[Vertex]], element: Vertex, toplist: List[Vertex]=None):
+def dfs_visit(graph: Dict[Vertex, List[Vertex]], element: Vertex,
+              time: int, toplist: List[Vertex]=None):
     """Part of dfs for depth"""
-    global TIME
-    TIME = TIME + 1
-    element.data['Start'] = TIME
+    time += 1
+    element.data['Start'] = time
     element.color = Color.GRAY
     for vertex in graph[element]:
         if vertex.color is Color.WHITE:
             vertex.parent = element
-            dfs_visit(graph, vertex, toplist)
+            time = dfs_visit(graph, vertex, time, toplist)
     element.color = Color.BLACK
-    TIME = TIME + 1
-    element.data['End'] = TIME
+    time += 1
+    element.data['End'] = time
     if toplist is not None:
         toplist.insert(0, element)
-
+    return time
 
 def _print_path(source: Vertex, destination: Vertex):
     """Prints elemts between source and destination vertices"""
@@ -124,7 +124,7 @@ def print_path(graph: Dict[Vertex, List[Vertex]],
         depth_first_search(graph, source)
     _print_path(source, destination)
     print()
-    
+
 def breadth_first_search(graph: Dict[Vertex, Vertex], source: Vertex):
     """BFS Implementation"""
     source.reset()
