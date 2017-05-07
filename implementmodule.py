@@ -6,13 +6,15 @@ from typing import Dict, List
 TIME = 0
 
 class Vertex:
-    """Cvor grafa"""
+    """Graph vertex"""
     def __init__(self, name):
         self.name = name
         self.color = Color.WHITE
         self.parent = None
         self.data = {
+            # used for graph when vertex is discovered
             'Start': None,
+            # used for graph when vertex is completed
             'End': None
             }
 
@@ -69,8 +71,8 @@ class Color(Enum):
     WHITE = 255
 
 
-def depth_first_search(graph: Dict[Vertex, List[Vertex]], toplist: List[Vertex]=None):
-    """DFS Implement"""
+def depth_first_search(graph: Dict[Vertex, List[Vertex]], vertex: Vertex, toplist: List[Vertex]=None):
+    """DFS Implement additional arg is for topological sort"""
     for vertex in graph.keys():
         vertex.reset()
     global TIME
@@ -84,7 +86,7 @@ def dfs_visit(graph: Dict[Vertex, List[Vertex]], element: Vertex, toplist: List[
     """Part of dfs for depth"""
     global TIME
     TIME = TIME + 1
-    element.data['Discovery'] = TIME
+    element.data['Start'] = TIME
     element.color = Color.GRAY
     for vertex in graph[element]:
         if vertex.color is Color.WHITE:
@@ -92,32 +94,46 @@ def dfs_visit(graph: Dict[Vertex, List[Vertex]], element: Vertex, toplist: List[
             dfs_visit(graph, vertex, toplist)
     element.color = Color.BLACK
     TIME = TIME + 1
-    element.data['Finish'] = TIME
+    element.data['End'] = TIME
     if toplist is not None:
         toplist.insert(0, element)
 
 
-def print_path(source: Vertex, destination: Vertex):
-    """Print path between to vertexes"""
+def _print_path(source: Vertex, destination: Vertex):
+    """Prints elemts between source and destination vertices"""
+    ret = False
     if source == destination:
-        print(source)
+        print(source.name)
+        ret = True
+        return ret
     elif destination.parent is None:
-        print('Na path found')
+        print('No path')
+        return ret
     else:
-        print_path(source, destination.parent)
-        print(destination)
+        ret = _print_path(source, destination.parent)
+        print(destination.name)
+        return ret
 
-
+def print_path(graph: Dict[Vertex, List[Vertex]],
+               source: Vertex, destination: Vertex,
+               option: bool=False):
+    """prints path and distancance aditional arg for bfs(false,default) or dfs(true)"""
+    if not option:
+        breadth_first_search(graph, source)
+    else:
+        depth_first_search(graph, source)
+    _print_path(source, destination)
+    print()
+    
 def breadth_first_search(graph: Dict[Vertex, Vertex], source: Vertex):
-    """BFS Implement"""
+    """BFS Implementation"""
     source.reset()
     vertexqueue = queue.Queue()
     for vertex in graph.keys():
         if vertex != source:
             vertex.reset()
     source.color = Color.GRAY
-    time = 0
-    source.data['Discovery'] = time
+    source.init_start()
     source.parent = None
     vertexqueue.put(source)
     while not vertexqueue.empty():
@@ -127,17 +143,5 @@ def breadth_first_search(graph: Dict[Vertex, Vertex], source: Vertex):
                 vertex.color = Color.GRAY
                 vertex.parent = vertexsource
                 vertexqueue.put(vertex)
-                time += 1
-                vertex.data['Discovery'] = time
-        time += 1
+                vertex.data['Start'] = vertexsource.data['Start'] + 1
         vertexsource.color = Color.BLACK
-        vertexsource.data['Finish'] = time
-
-# TESTIRANJE
-TEST = Vertex('test')
-PARENT = Vertex('parent')
-print(TEST)
-TEST.parent = PARENT
-TEST.data['End'] = 4
-TEST.data['Start'] = 3
-print(TEST)
